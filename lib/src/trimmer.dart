@@ -19,8 +19,15 @@ import 'package:video_trimmer/src/trim_editor.dart';
 /// * [videPlaybackControl()]
 class Trimmer {
   static File currentVideoFile;
+  final Duration maxDuration;
+  final Duration minDuration;
 
   final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
+
+  Trimmer({
+    @required this.maxDuration,
+    @required this.minDuration,
+  });
 
   /// Loads a video using the path provided.
   ///
@@ -29,18 +36,7 @@ class Trimmer {
     currentVideoFile = videoFile;
     if (currentVideoFile != null) {
       videoPlayerController = VideoPlayerController.file(currentVideoFile);
-      await videoPlayerController.initialize().then((_) {
-        TrimEditor(
-          viewerHeight: 50,
-          viewerWidth: 50.0 * 8,
-          // currentVideoFile: currentVideoFile,
-        );
-      });
-      // TrimEditor(
-      //   viewerHeight: 50,
-      //   viewerWidth: 50.0 * 8,
-      //   // currentVideoFile: currentVideoFile,
-      // );
+      await videoPlayerController.initialize();
     }
   }
 
