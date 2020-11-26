@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:path/path.dart';
 
 import 'package:flutter/material.dart';
@@ -217,7 +218,11 @@ class Trimmer {
       _outputFormatString = outputFormat.toString();
     }
 
-    String _trimLengthCommand = ' -ss $startPoint -i "$_videoPath" -t ${endPoint - startPoint} -avoid_negative_ts make_zero ';
+    // String _trimLengthCommand =
+    //     ' -ss $startPoint -i "$_videoPath" -t ${endPoint - startPoint} -avoid_negative_ts make_zero ';
+
+    String _trimLengthCommand =
+        '-i "$_videoPath" -ss $startPoint -t ${endPoint - startPoint}';
 
     if (ffmpegCommand == null) {
       _command = '$_trimLengthCommand -c:a copy ';
@@ -238,16 +243,18 @@ class Trimmer {
       }
     } else {
       _command = '$_trimLengthCommand $ffmpegCommand ';
-      _outputFormatString = customVideoFormat;
+      _outputFormatString = customVideoFormat ?? _outputFormatString;
     }
 
     _outputPath = '$path$videoFileName$_outputFormatString';
 
     _command += '"$_outputPath"';
 
-    await _flutterFFmpeg.execute(_command).whenComplete(() {
+    final int result =
+        await _flutterFFmpeg.execute(_command).whenComplete(() async {
       print('Got value');
       debugPrint('Video successfuly saved');
+      // GallerySaver.saveVideo(_outputPath);
       // _resultString = 'Video successfuly saved';
     }).catchError((error) {
       print('Error');
@@ -255,7 +262,13 @@ class Trimmer {
       debugPrint('Couldn\'t save the video');
     });
 
+    print('GOT THIS VALUE => $result');
+
     return _outputPath;
+  }
+
+  Future cancel() async {
+    await _flutterFFmpeg.cancel();
   }
 
   /// For getting the video controller state, to know whether the

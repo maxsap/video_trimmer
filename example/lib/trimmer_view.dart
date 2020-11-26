@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:example/preview.dart';
 import 'package:flutter/material.dart';
 import 'package:video_trimmer/video_trimmer.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
 
 class TrimmerView extends StatefulWidget {
   final Trimmer _trimmer;
@@ -23,8 +28,17 @@ class _TrimmerViewState extends State<TrimmerView> {
 
     String _value;
 
+    final File watermarkFile = await _getPath();
+    final String watermarkPath = watermarkFile.path;
+    String addWatermark =
+        '-ignore_loop 0 -i "$watermarkPath" -filter_complex "overlay=x=(main_w-overlay_w):y=(main_h-overlay_h)" -c:a copy';
+
     await widget._trimmer
-        .saveTrimmedVideo(startValue: _startValue, endValue: _endValue)
+        .saveTrimmedVideo(
+      startValue: _startValue,
+      endValue: _endValue,
+      ffmpegCommand: addWatermark,
+    )
         .then((value) {
       setState(() {
         _progressVisibility = false;
@@ -33,6 +47,15 @@ class _TrimmerViewState extends State<TrimmerView> {
     });
 
     return _value;
+  }
+
+  Future<File> _getPath() async {
+    Directory directory = await getApplicationDocumentsDirectory();
+    var dbPath = join(directory.path, "watermark.gif");
+    ByteData data = await rootBundle.load("assets/watermark2.gif");
+    List<int> bytes =
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    return File(dbPath).writeAsBytes(bytes);
   }
 
   @override
@@ -82,7 +105,9 @@ class _TrimmerViewState extends State<TrimmerView> {
                   child: TrimEditor(
                     viewerHeight: 50.0,
                     viewerWidth: MediaQuery.of(context).size.width,
-                    maxVideoLength: Duration(seconds: 10),
+                    maxDuration: Duration(seconds: 30),
+                    minDuration: Duration(seconds: 5),
+                    // fit: BoxFit.cover,
                     onChangeStart: (value) {
                       _startValue = value;
                     },
@@ -109,7 +134,8 @@ class _TrimmerViewState extends State<TrimmerView> {
                           color: Colors.white,
                         ),
                   onPressed: () async {
-                    bool playbackState = await widget._trimmer.videPlaybackControl(
+                    bool playbackState =
+                        await widget._trimmer.videPlaybackControl(
                       startValue: _startValue,
                       endValue: _endValue,
                     );

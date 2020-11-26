@@ -1,188 +1,53 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:video_trimmer/src/thumbnail_viewer.dart';
-import 'package:video_trimmer/src/trim_editor_painter.dart';
-import 'package:video_trimmer/src/trimmer.dart';
+import 'package:video_trimmer/video_trimmer.dart';
 
 VideoPlayerController videoPlayerController;
 
 class TrimEditor extends StatefulWidget {
-  /// For defining the total trimmer area width
   final double viewerWidth;
 
-  /// For defining the total trimmer area height
   final double viewerHeight;
 
-  /// For defining the image fit type of each thumbnail image.
-  ///
-  /// By default it is set to `BoxFit.fitHeight`.
-  final BoxFit fit;
+  final Duration maxDuration;
 
-  /// For defining the maximum length of the output video.
-  final Duration maxVideoLength;
+  final Duration minDuration;
 
-  /// For specifying a size to the holder at the
-  /// two ends of the video trimmer area, while it is `idle`.
-  ///
-  /// By default it is set to `5.0`.
-  final double circleSize;
-
-  /// For specifying a size to the holder at
-  /// the two ends of the video trimmer area, while it is being
-  /// `dragged`.
-  ///
-  /// By default it is set to `8.0`.
-  final double circleSizeOnDrag;
-
-  /// For specifying a color to the circle.
-  ///
-  /// By default it is set to `Colors.white`.
-  final Color circlePaintColor;
-
-  /// For specifying a color to the border of
-  /// the trim area.
-  ///
-  /// By default it is set to `Colors.white`.
-  final Color borderPaintColor;
-
-  /// For specifying a color to the video
-  /// scrubber inside the trim area.
-  ///
-  /// By default it is set to `Colors.white`.
   final Color scrubberPaintColor;
 
-  /// For specifying the quality of each
-  /// generated image thumbnail, to be displayed in the trimmer
-  /// area.
   final int thumbnailQuality;
 
-  /// For showing the start and the end point of the
-  /// video on top of the trimmer area.
-  ///
-  /// By default it is set to `true`.
   final bool showDuration;
 
-  /// For providing a `TextStyle` to the
-  /// duration text.
-  ///
-  /// By default it is set to `TextStyle(color: Colors.white)`
   final TextStyle durationTextStyle;
 
-  /// Callback to the video start position
-  ///
-  /// Returns the selected video start position in `milliseconds`.
   final Function(double startValue) onChangeStart;
 
-  /// Callback to the video end position.
-  ///
-  /// Returns the selected video end position in `milliseconds`.
   final Function(double endValue) onChangeEnd;
 
-  /// Callback to the video playback
-  /// state to know whether it is currently playing or paused.
-  ///
-  /// Returns a `boolean` value. If `true`, video is currently
-  /// playing, otherwise paused.
   final Function(bool isPlaying) onChangePlaybackState;
 
-  /// Widget for displaying the video trimmer.
-  ///
-  /// This has frame wise preview of the video with a
-  /// slider for selecting the part of the video to be
-  /// trimmed.
-  ///
-  /// The required parameters are [viewerWidth] & [viewerHeight]
-  ///
-  /// * [viewerWidth] to define the total trimmer area width.
-  ///
-  ///
-  /// * [viewerHeight] to define the total trimmer area height.
-  ///
-  ///
-  /// The optional parameters are:
-  ///
-  /// * [fit] for specifying the image fit type of each thumbnail image.
-  /// By default it is set to `BoxFit.fitHeight`.
-  ///
-  ///
-  /// * [maxVideoLength] for specifying the maximum length of the
-  /// output video.
-  ///
-  ///
-  /// * [circleSize] for specifying a size to the holder at the
-  /// two ends of the video trimmer area, while it is `idle`.
-  /// By default it is set to `5.0`.
-  ///
-  ///
-  /// * [circleSizeOnDrag] for specifying a size to the holder at
-  /// the two ends of the video trimmer area, while it is being
-  /// `dragged`. By default it is set to `8.0`.
-  ///
-  ///
-  /// * [circlePaintColor] for specifying a color to the circle.
-  /// By default it is set to `Colors.white`.
-  ///
-  ///
-  /// * [borderPaintColor] for specifying a color to the border of
-  /// the trim area. By default it is set to `Colors.white`.
-  ///
-  ///
-  /// * [scrubberPaintColor] for specifying a color to the video
-  /// scrubber inside the trim area. By default it is set to
-  /// `Colors.white`.
-  ///
-  ///
-  /// * [thumbnailQuality] for specifying the quality of each
-  /// generated image thumbnail, to be displayed in the trimmer
-  /// area.
-  ///
-  ///
-  /// * [showDuration] for showing the start and the end point of the
-  /// video on top of the trimmer area. By default it is set to `true`.
-  ///
-  ///
-  /// * [durationTextStyle] is for providing a `TextStyle` to the
-  /// duration text. By default it is set to
-  /// `TextStyle(color: Colors.white)`
-  ///
-  ///
-  /// * [onChangeStart] is a callback to the video start position.
-  ///
-  ///
-  /// * [onChangeEnd] is a callback to the video end position.
-  ///
-  ///
-  /// * [onChangePlaybackState] is a callback to the video playback
-  /// state to know whether it is currently playing or paused.
-  ///
+  final Color primaryColor;
+
+  final Color onSelectColor;
+
   TrimEditor({
     @required this.viewerWidth,
     @required this.viewerHeight,
-    this.fit = BoxFit.fitHeight,
-    this.maxVideoLength = const Duration(milliseconds: 0),
-    this.circleSize = 5.0,
-    this.circleSizeOnDrag = 8.0,
-    this.circlePaintColor = Colors.white,
-    this.borderPaintColor = Colors.white,
+    @required this.maxDuration,
+    @required this.minDuration,
     this.scrubberPaintColor = Colors.white,
     this.thumbnailQuality = 75,
     this.showDuration = true,
-    this.durationTextStyle = const TextStyle(
-      color: Colors.white,
-    ),
+    this.durationTextStyle = const TextStyle(color: Colors.white),
     this.onChangeStart,
     this.onChangeEnd,
     this.onChangePlaybackState,
+    this.primaryColor = Colors.white,
+    this.onSelectColor = Colors.yellow,
   })  : assert(viewerWidth != null),
         assert(viewerHeight != null),
-        assert(fit != null),
-        assert(maxVideoLength != null),
-        assert(circleSize != null),
-        assert(circleSizeOnDrag != null),
-        assert(circlePaintColor != null),
-        assert(borderPaintColor != null),
         assert(scrubberPaintColor != null),
         assert(thumbnailQuality != null),
         assert(showDuration != null),
@@ -195,36 +60,35 @@ class TrimEditor extends StatefulWidget {
 class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
   File _videoFile;
 
-  double _videoStartPos = 0.0;
-  double _videoEndPos = 0.0;
+  double _videoStartPos = 0.0; //视频开始截取的时间
+  double _videoEndPos = 0.0; //视频结束截取的时间
 
-  bool _canUpdateStart = true;
-  bool _isLeftDrag = true;
-
-  Offset _startPos = Offset(0, 0);
-  Offset _endPos = Offset(0, 0);
-
-  double _startFraction = 0.0;
-  double _endFraction = 1.0;
-
-  int _videoDuration = 0;
+  int _videoDuration = 0; //视频的时长
   int _currentPosition = 0;
 
-  double _thumbnailViewerW = 0.0;
-  double _thumbnailViewerH = 0.0;
+  int _numberOfThumbnails = 0; //生成缩略图的张数
 
-  int _numberOfThumbnails = 0;
+  double _minLengthPixels;
 
-  double _circleSize;
+  double _start; //左边滑块的位置
+  double _end; //右边滑块的位置
+  double _sliderLength = 10.0; //滑块的宽度
 
-  double fraction;
-  double maxLengthPixels;
+  double _arrivedLeft; //滑块到达最左边位置
+  double _arrivedRight; //滑块到达最右边位置
 
   ThumbnailViewer thumbnailWidget;
 
   Animation<double> _scrubberAnimation;
   AnimationController _animationController;
   Tween<double> _linearTween;
+
+  ScrollController controller; //缩略图滚动控制器
+
+  double _maxRegion; //滑块之间的最大距离
+
+  double _fraction;
+  double _offset = 0;
 
   Future<void> _initializeVideoController() async {
     if (_videoFile != null) {
@@ -251,7 +115,7 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
         } else {
           if (videoPlayerController.value.initialized) {
             if (_animationController != null) {
-              if ((_scrubberAnimation.value).toInt() == (_endPos.dx).toInt()) {
+              if ((_scrubberAnimation.value).toInt() == (_end).toInt()) {
                 _animationController.reset();
               }
               _animationController.stop();
@@ -262,143 +126,97 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
       });
 
       videoPlayerController.setVolume(1.0);
-      _videoDuration = videoPlayerController.value.duration.inMilliseconds;
-      print(_videoFile.path);
 
-      _videoEndPos = fraction != null
-          ? _videoDuration.toDouble() * fraction
-          : _videoDuration.toDouble();
+      _videoDuration = videoPlayerController.value.duration.inMilliseconds;
+
+      _videoStartPos = 0.0;
+      widget.onChangeStart(_videoStartPos);
+
+      _videoEndPos = widget.maxDuration.inMilliseconds.toDouble();
+      if (videoPlayerController.value.duration <= widget.maxDuration)
+        _videoEndPos =
+            videoPlayerController.value.duration.inMilliseconds.toDouble();
 
       widget.onChangeEnd(_videoEndPos);
+
+      //默认maxDuration对应10张缩略图
+      _numberOfThumbnails =
+          ((_videoDuration / widget.maxDuration.inMilliseconds) * 10).toInt();
+      double _thumbnailWidth = _maxRegion / 10;
+
+      if (_numberOfThumbnails <= 10) //上传的视频时长不大于最大时长
+      {
+        _numberOfThumbnails = 10;
+        _thumbnailWidth = _maxRegion / 10;
+      }
 
       final ThumbnailViewer _thumbnailWidget = ThumbnailViewer(
         videoFile: _videoFile,
         videoDuration: _videoDuration,
-        fit: widget.fit,
-        thumbnailHeight: _thumbnailViewerH,
+        thumbnailHeight: widget.viewerHeight,
+        thumbnailWidth: _thumbnailWidth,
         numberOfThumbnails: _numberOfThumbnails,
         quality: widget.thumbnailQuality,
+        startSpace: _start,
+        endSpace: widget.viewerWidth * 0.1,
+        controller: controller,
       );
       thumbnailWidget = _thumbnailWidget;
     }
   }
 
-  void _setVideoStartPosition(DragUpdateDetails details) async {
-    if (!(_startPos.dx + details.delta.dx < 0) &&
-        !(_startPos.dx + details.delta.dx > _thumbnailViewerW) &&
-        !(_startPos.dx + details.delta.dx > _endPos.dx)) {
-      if (maxLengthPixels != null) {
-        if (!(_endPos.dx - _startPos.dx - details.delta.dx > maxLengthPixels)) {
-          setState(() {
-            if (!(_startPos.dx + details.delta.dx < 0))
-              _startPos += details.delta;
+  _scrollerListener() {
+    controller.addListener(() async {
+      setState(() {
+        _offset = controller.offset;
+        _videoStartPos =
+            (_start - _arrivedLeft + controller.offset) * _fraction;
+        _videoEndPos = (_end - _arrivedLeft + controller.offset) * _fraction;
 
-            _startFraction = (_startPos.dx / _thumbnailViewerW);
-
-            _videoStartPos = _videoDuration * _startFraction;
-            widget.onChangeStart(_videoStartPos);
-          });
-          await videoPlayerController.pause();
-          await videoPlayerController
-              .seekTo(Duration(milliseconds: _videoStartPos.toInt()));
-          _linearTween.begin = _startPos.dx;
-          _animationController.duration =
-              Duration(milliseconds: (_videoEndPos - _videoStartPos).toInt());
-          _animationController.reset();
-        }
-      } else {
-        setState(() {
-          if (!(_startPos.dx + details.delta.dx < 0))
-            _startPos += details.delta;
-
-          _startFraction = (_startPos.dx / _thumbnailViewerW);
-
-          _videoStartPos = _videoDuration * _startFraction;
-          widget.onChangeStart(_videoStartPos);
-        });
-        await videoPlayerController.pause();
-        await videoPlayerController
-            .seekTo(Duration(milliseconds: _videoStartPos.toInt()));
-        _linearTween.begin = _startPos.dx;
+        _linearTween.begin = _start + _sliderLength;
+        _linearTween.end = _end;
         _animationController.duration =
             Duration(milliseconds: (_videoEndPos - _videoStartPos).toInt());
         _animationController.reset();
-      }
-    }
-  }
 
-  void _setVideoEndPosition(DragUpdateDetails details) async {
-    if (!(_endPos.dx + details.delta.dx > _thumbnailViewerW) &&
-        !(_endPos.dx + details.delta.dx < 0) &&
-        !(_endPos.dx + details.delta.dx < _startPos.dx)) {
-      if (maxLengthPixels != null) {
-        if (!(_endPos.dx - _startPos.dx + details.delta.dx > maxLengthPixels)) {
-          setState(() {
-            _endPos += details.delta;
-            _endFraction = _endPos.dx / _thumbnailViewerW;
+        widget.onChangeStart(_videoStartPos);
+        widget.onChangeEnd(_videoEndPos);
+      });
 
-            _videoEndPos = _videoDuration * _endFraction;
-            widget.onChangeEnd(_videoEndPos);
-          });
-          await videoPlayerController.pause();
-          await videoPlayerController
-              .seekTo(Duration(milliseconds: _videoEndPos.toInt()));
-          _linearTween.end = _endPos.dx;
-          _animationController.duration =
-              Duration(milliseconds: (_videoEndPos - _videoStartPos).toInt());
-          _animationController.reset();
-        }
-      } else {
-        setState(() {
-          _endPos += details.delta;
-          _endFraction = _endPos.dx / _thumbnailViewerW;
-
-          _videoEndPos = _videoDuration * _endFraction;
-          widget.onChangeEnd(_videoEndPos);
-        });
-        await videoPlayerController.pause();
-        await videoPlayerController
-            .seekTo(Duration(milliseconds: _videoEndPos.toInt()));
-        _linearTween.end = _endPos.dx;
-        _animationController.duration =
-            Duration(milliseconds: (_videoEndPos - _videoStartPos).toInt());
-        _animationController.reset();
-      }
-    }
+      await videoPlayerController.pause();
+      await videoPlayerController
+          .seekTo(Duration(milliseconds: _videoStartPos.toInt()));
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _circleSize = widget.circleSize;
+    controller = ScrollController();
+    _scrollerListener();
+
+    _maxRegion = widget.viewerWidth * 0.8;
+    _arrivedLeft = _start = widget.viewerWidth * 0.1;
+    _arrivedRight = _end = widget.viewerWidth * 0.9;
 
     _videoFile = Trimmer.currentVideoFile;
-    _thumbnailViewerH = widget.viewerHeight;
-
-    _numberOfThumbnails = widget.viewerWidth ~/ _thumbnailViewerH;
-
-    _thumbnailViewerW = _numberOfThumbnails * _thumbnailViewerH;
-
-    Duration totalDuration = videoPlayerController.value.duration;
-
-    if (widget.maxVideoLength > Duration(milliseconds: 0) &&
-        widget.maxVideoLength < totalDuration) {
-      if (widget.maxVideoLength < totalDuration) {
-        fraction =
-            widget.maxVideoLength.inMilliseconds / totalDuration.inMilliseconds;
-
-        maxLengthPixels = _thumbnailViewerW * fraction;
-      }
-    }
 
     _initializeVideoController();
-    _endPos = Offset(
-      maxLengthPixels != null ? maxLengthPixels : _thumbnailViewerW,
-      _thumbnailViewerH,
-    );
+
+    if (_videoDuration > widget.maxDuration.inMilliseconds) {
+      _fraction = widget.maxDuration.inMilliseconds / _maxRegion;
+    } else {
+      _fraction = _videoDuration / _maxRegion;
+    }
+
+    _minLengthPixels = (widget.minDuration.inMilliseconds /
+            widget.maxDuration.inMilliseconds) *
+        _maxRegion;
+    if (Duration(milliseconds: _videoDuration).inSeconds <=
+        widget.minDuration.inSeconds) _minLengthPixels = _maxRegion; //不能拖动
 
     // Defining the tween points
-    _linearTween = Tween(begin: _startPos.dx, end: _endPos.dx);
+    _linearTween = Tween(begin: _start + _sliderLength, end: _end);
 
     _animationController = AnimationController(
       vsync: this,
@@ -426,112 +244,263 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
       videoPlayerController.dispose();
       widget.onChangePlaybackState(false);
     }
+    controller?.dispose();
     super.dispose();
+  }
+
+  Duration _formatTime(Duration duration) {
+    String str = duration.toString();
+
+    int p = int.parse(str.split('.')[1].substring(0, 1));
+
+    int seconds = duration.inSeconds;
+
+    if (p >= 5) seconds = seconds + 1;
+
+    return Duration(seconds: seconds);
+  }
+
+  String _showTime(String type) {
+    Duration _sd = _formatTime(Duration(milliseconds: _videoStartPos.toInt()));
+    Duration _ed = _formatTime(Duration(milliseconds: _videoEndPos.toInt()));
+    Duration _id = _ed - _sd;
+
+    if (type == 'start') return _sd.toString().split('.')[0];
+    if (type == 'end') return _ed.toString().split('.')[0];
+    if (type == 'duration') return _id.toString().split('.')[0];
+
+    return '';
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragStart: (DragStartDetails details) {
-        print("START");
-        print(details.localPosition);
-        print((_startPos.dx - details.localPosition.dx).abs());
-        print((_endPos.dx - details.localPosition.dx).abs());
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        _videoPreview(),
+        _videoFrameSlider(),
+      ],
+    );
+  }
 
-        if (_endPos.dx >= _startPos.dx) {
-          if ((_startPos.dx - details.localPosition.dx).abs() >
-              (_endPos.dx - details.localPosition.dx).abs()) {
-            setState(() {
-              _canUpdateStart = false;
-            });
-          } else {
-            setState(() {
-              _canUpdateStart = true;
-            });
-          }
-        } else {
-          if (_startPos.dx > details.localPosition.dx) {
-            _isLeftDrag = true;
-          } else {
-            _isLeftDrag = false;
-          }
-        }
-      },
-      onHorizontalDragEnd: (DragEndDetails details) {
-        setState(() {
-          _circleSize = widget.circleSize;
-        });
-      },
-      onHorizontalDragUpdate: (DragUpdateDetails details) {
-        _circleSize = widget.circleSizeOnDrag;
+  bool _dragLeft = false;
 
-        if (_endPos.dx >= _startPos.dx) {
-          _isLeftDrag = false;
-          if (_canUpdateStart && _startPos.dx + details.delta.dx > 0) {
-            _isLeftDrag = false; // To prevent from scrolling over
-            _setVideoStartPosition(details);
-          } else if (!_canUpdateStart &&
-              _endPos.dx + details.delta.dx < _thumbnailViewerW) {
-            _isLeftDrag = true; // To prevent from scrolling over
-            _setVideoEndPosition(details);
-          }
-        } else {
-          if (_isLeftDrag && _startPos.dx + details.delta.dx > 0) {
-            _setVideoStartPosition(details);
-          } else if (!_isLeftDrag &&
-              _endPos.dx + details.delta.dx < _thumbnailViewerW) {
-            _setVideoEndPosition(details);
-          }
-        }
+  Widget _leftSlider() {
+    Widget current = Container(
+      height: 50,
+      width: _sliderLength,
+      color: _dragLeft ? widget.onSelectColor : widget.primaryColor,
+    );
+
+    current = GestureDetector(
+      onHorizontalDragStart: (details) {
+        _onLeftDragStart(details);
       },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          widget.showDuration
-              ? Container(
-                  width: _thumbnailViewerW,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        Text(
-                          Duration(milliseconds: _videoStartPos.toInt())
-                              .toString()
-                              .split('.')[0],
-                          style: widget.durationTextStyle,
-                        ),
-                        Text(
-                          Duration(milliseconds: _videoEndPos.toInt())
-                              .toString()
-                              .split('.')[0],
-                          style: widget.durationTextStyle,
-                        ),
-                      ],
-                    ),
+      onHorizontalDragEnd: (details) {
+        _onLeftDragEnd(details);
+      },
+      onHorizontalDragUpdate: (DragUpdateDetails details) async {
+        await _onLeftDragUpdate(details);
+      },
+      child: current,
+    );
+
+    return Positioned(left: _start, child: current);
+  }
+
+  Widget _middleSliderSection() {
+    Widget current = Container(
+      height: 50,
+      width: _sliderLength,
+      color: widget.primaryColor.withOpacity(0.2),
+    );
+
+    current = GestureDetector(
+      onHorizontalDragStart: (details) {
+        _onLeftDragStart(details);
+        _onRightDragStart(details);
+      },
+      onHorizontalDragEnd: (details) {
+        _onLeftDragEnd(details);
+        _onRightDragEnd(details);
+      },
+      onHorizontalDragUpdate: (DragUpdateDetails details) async {
+        await _onLeftDragUpdate(details);
+        await _onRightDragUpdate(details);
+      },
+      child: current,
+    );
+
+    return Positioned(
+        left: _start + _sliderLength,
+        right: widget.viewerWidth - _end,
+        child: current);
+  }
+
+  bool _dragRight = false;
+  Widget _rightSlider() {
+    Widget current = Container(
+      height: 50,
+      width: _sliderLength,
+      color: _dragRight ? widget.onSelectColor : widget.primaryColor,
+    );
+
+    current = GestureDetector(
+      onHorizontalDragStart: (details) {
+        _onRightDragStart(details);
+      },
+      onHorizontalDragEnd: (details) {
+        _onRightDragEnd(details);
+      },
+      onHorizontalDragUpdate: (DragUpdateDetails details) async {
+        await _onRightDragUpdate(details);
+      },
+      child: current,
+    );
+
+    return Positioned(left: _end, child: current);
+  }
+
+  void _onRightDragStart(DragStartDetails details) {
+    setState(() {
+      _dragRight = true;
+    });
+  }
+
+  void _onRightDragEnd(DragEndDetails details) {
+    setState(() {
+      _dragRight = false;
+    });
+  }
+
+  Future<void> _onRightDragUpdate(DragUpdateDetails details) async {
+    if (_end + details.delta.dx > _arrivedRight) {
+      setState(() {
+        _end = _arrivedRight;
+        _videoEndPos = _fraction * (_end + _offset + -_arrivedLeft);
+      });
+
+      return;
+    }
+
+    if (_end - _start + details.delta.dx < _minLengthPixels) return;
+
+    setState(() {
+      _end = _end + details.delta.dx;
+      _videoEndPos = _fraction * (_end + _offset - _arrivedLeft);
+
+      widget.onChangeEnd(_videoEndPos);
+    });
+
+    await videoPlayerController.pause();
+    await videoPlayerController
+        .seekTo(Duration(milliseconds: _videoStartPos.toInt()));
+
+    _linearTween.end = _end;
+    _animationController.duration =
+        Duration(milliseconds: (_videoEndPos - _videoStartPos).toInt());
+    _animationController.reset();
+  }
+
+  Future<void> _onLeftDragUpdate(DragUpdateDetails details) async {
+    if (_start + details.delta.dx < _arrivedLeft) {
+      setState(() {
+        _start = _arrivedLeft;
+      });
+
+      return;
+    }
+
+    if (_end - _start - details.delta.dx < _minLengthPixels) return;
+
+    setState(() {
+      _start = _start + details.delta.dx;
+      _videoStartPos = _fraction * (_start + _offset - _arrivedLeft);
+      widget.onChangeStart(_videoStartPos);
+    });
+
+    await videoPlayerController.pause();
+    await videoPlayerController
+        .seekTo(Duration(milliseconds: _videoStartPos.toInt()));
+
+    _linearTween.begin = _start + _sliderLength;
+    _animationController.duration =
+        Duration(milliseconds: (_videoEndPos - _videoStartPos).toInt());
+    _animationController.reset();
+  }
+
+  void _onLeftDragEnd(DragEndDetails details) {
+    setState(() {
+      _dragLeft = false;
+    });
+  }
+
+  void _onLeftDragStart(DragStartDetails details) {
+    setState(() {
+      _dragLeft = true;
+    });
+  }
+
+  Widget _videoPreview() {
+    return widget.showDuration
+        ? Container(
+            width: widget.viewerWidth,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Text(
+                    _showTime('start'),
+                    style: widget.durationTextStyle,
                   ),
-                )
-              : Container(),
-          CustomPaint(
-            foregroundPainter: TrimEditorPainter(
-              startPos: _startPos,
-              endPos: _endPos,
-              scrubberAnimationDx: _scrubberAnimation.value,
-              circleSize: _circleSize,
-              circlePaintColor: widget.circlePaintColor,
-              borderPaintColor: widget.borderPaintColor,
-              scrubberPaintColor: widget.scrubberPaintColor,
+                  Text(
+                    _showTime('duration'),
+                    style: widget.durationTextStyle,
+                  ),
+                  Text(
+                    _showTime('end'),
+                    style: widget.durationTextStyle,
+                  ),
+                ],
+              ),
             ),
-            child: Container(
-              color: Colors.grey[900],
-              height: _thumbnailViewerH,
-              width: _thumbnailViewerW,
-              child: thumbnailWidget == null ? Column() : thumbnailWidget,
-            ),
-          ),
-        ],
-      ),
+          )
+        : Container();
+  }
+
+  Widget _videoFrameSlider() {
+    return Stack(
+      children: [
+        Container(
+          height: widget.viewerHeight,
+          width: widget.viewerWidth,
+          child: thumbnailWidget == null ? Column() : thumbnailWidget,
+        ),
+        _leftSlider(),
+        _rightSlider(),
+        _middleSliderSection(),
+        // Positioned(
+        //   left: _start + _sliderLength,
+        //   right: widget.viewerWidth - _end,
+        //   bottom: 0,
+        //   child: Container(height: 1, color: Colors.white),
+        // ),
+        // Positioned(
+        //   left: _scrubberAnimation.value,
+        //   top: 0,
+        //   bottom: 0,
+        //   child: Container(
+        //     width: 2,
+        //     color: _scrubberAnimation.value <= (_start + _sliderLength + 1)
+        //         ? Colors.transparent
+        //         : videoPlayerController.value.isPlaying
+        //             ? widget.onSelectColor
+        //             : widget.onSelectColor,
+        //   ),
+        // ),
+      ],
     );
   }
 }

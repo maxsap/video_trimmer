@@ -16,22 +16,26 @@ class HomePage extends StatelessWidget {
         title: Text("Video Trimmer"),
       ),
       body: Center(
-        child: Container(
-          child: RaisedButton(
-            child: Text("LOAD VIDEO"),
-            onPressed: () async {
-              PickedFile file = await imagePicker.getVideo(
-                source: ImageSource.gallery,
-              );
-              if (file != null) {
-                await _trimmer.loadVideo(videoFile: File(file.path));
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                  return TrimmerView(_trimmer);
-                }));
-              }
-            },
+        child: Row(children: [
+          Image.asset('assets/watermark2.png'),
+          Container(
+            child: RaisedButton(
+              child: Text("LOAD VIDEO"),
+              onPressed: () async {
+                PickedFile file = await imagePicker.getVideo(
+                  source: ImageSource.gallery,
+                );
+                if (file != null) {
+                  await _trimmer.loadVideo(videoFile: File(file.path));
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
+                    return TrimmerView(_trimmer);
+                  }));
+                }
+              },
+            ),
           ),
-        ),
+        ]),
       ),
     );
   }
