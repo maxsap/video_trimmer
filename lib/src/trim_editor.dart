@@ -308,7 +308,7 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
 
   Widget _middleSliderSection() {
     Widget current = Container(
-      height: 25,
+      height: 5,
       width: _sliderLength,
       color: widget.primaryColor.withOpacity(0.2),
     );
