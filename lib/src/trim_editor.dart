@@ -60,22 +60,22 @@ class TrimEditor extends StatefulWidget {
 class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
   File _videoFile;
 
-  double _videoStartPos = 0.0; //视频开始截取的时间
-  double _videoEndPos = 0.0; //视频结束截取的时间
+  double _videoStartPos = 0.0;
+  double _videoEndPos = 0.0;
 
-  int _videoDuration = 0; //视频的时长
+  int _videoDuration = 0;
   int _currentPosition = 0;
 
-  int _numberOfThumbnails = 0; //生成缩略图的张数
+  int _numberOfThumbnails = 0;
 
   double _minLengthPixels;
 
-  double _start; //左边滑块的位置
-  double _end; //右边滑块的位置
-  double _sliderLength = 10.0; //滑块的宽度
+  double _start;
+  double _end;
+  double _sliderLength = 10.0;
 
-  double _arrivedLeft; //滑块到达最左边位置
-  double _arrivedRight; //滑块到达最右边位置
+  double _arrivedLeft;
+  double _arrivedRight;
 
   ThumbnailViewer thumbnailWidget;
 
@@ -83,9 +83,9 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
   AnimationController _animationController;
   Tween<double> _linearTween;
 
-  ScrollController controller; //缩略图滚动控制器
+  ScrollController controller;
 
-  double _maxRegion; //滑块之间的最大距离
+  double _maxRegion;
 
   double _fraction;
   double _offset = 0;
@@ -139,13 +139,11 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
 
       widget.onChangeEnd(_videoEndPos);
 
-      //默认maxDuration对应10张缩略图
       _numberOfThumbnails =
           ((_videoDuration / widget.maxDuration.inMilliseconds) * 10).toInt();
       double _thumbnailWidth = _maxRegion / 10;
 
-      if (_numberOfThumbnails <= 10) //上传的视频时长不大于最大时长
-      {
+      if (_numberOfThumbnails <= 10) {
         _numberOfThumbnails = 10;
         _thumbnailWidth = _maxRegion / 10;
       }
@@ -310,7 +308,7 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
 
   Widget _middleSliderSection() {
     Widget current = Container(
-      height: 50,
+      height: 25,
       width: _sliderLength,
       color: widget.primaryColor.withOpacity(0.2),
     );
