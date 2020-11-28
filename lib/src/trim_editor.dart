@@ -32,11 +32,14 @@ class TrimEditor extends StatefulWidget {
 
   final Color onSelectColor;
 
+  final bool disabled;
+
   TrimEditor({
     @required this.viewerWidth,
     @required this.viewerHeight,
     @required this.maxDuration,
     @required this.minDuration,
+    this.disabled = false,
     this.scrubberPaintColor = Colors.white,
     this.thumbnailQuality = 75,
     this.showDuration = true,
@@ -291,15 +294,21 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
     );
 
     current = GestureDetector(
-      onHorizontalDragStart: (details) {
-        _onLeftDragStart(details);
-      },
-      onHorizontalDragEnd: (details) {
-        _onLeftDragEnd(details);
-      },
-      onHorizontalDragUpdate: (DragUpdateDetails details) async {
-        await _onLeftDragUpdate(details);
-      },
+      onHorizontalDragStart: widget.disabled
+          ? null
+          : (details) {
+              _onLeftDragStart(details);
+            },
+      onHorizontalDragEnd: widget.disabled
+          ? null
+          : (details) {
+              _onLeftDragEnd(details);
+            },
+      onHorizontalDragUpdate: widget.disabled
+          ? null
+          : (DragUpdateDetails details) async {
+              await _onLeftDragUpdate(details);
+            },
       child: current,
     );
 
@@ -314,18 +323,24 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
     );
 
     current = GestureDetector(
-      onHorizontalDragStart: (details) {
-        _onLeftDragStart(details);
-        _onRightDragStart(details);
-      },
-      onHorizontalDragEnd: (details) {
-        _onLeftDragEnd(details);
-        _onRightDragEnd(details);
-      },
-      onHorizontalDragUpdate: (DragUpdateDetails details) async {
-        await _onLeftDragUpdate(details);
-        await _onRightDragUpdate(details);
-      },
+      onHorizontalDragStart: widget.disabled
+          ? null
+          : (details) {
+              _onLeftDragStart(details);
+              _onRightDragStart(details);
+            },
+      onHorizontalDragEnd: widget.disabled
+          ? null
+          : (details) {
+              _onLeftDragEnd(details);
+              _onRightDragEnd(details);
+            },
+      onHorizontalDragUpdate: widget.disabled
+          ? null
+          : (DragUpdateDetails details) async {
+              await _onLeftDragUpdate(details);
+              await _onRightDragUpdate(details);
+            },
       child: current,
     );
 
@@ -344,15 +359,21 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
     );
 
     current = GestureDetector(
-      onHorizontalDragStart: (details) {
-        _onRightDragStart(details);
-      },
-      onHorizontalDragEnd: (details) {
-        _onRightDragEnd(details);
-      },
-      onHorizontalDragUpdate: (DragUpdateDetails details) async {
-        await _onRightDragUpdate(details);
-      },
+      onHorizontalDragStart: widget.disabled
+          ? null
+          : (details) {
+              _onRightDragStart(details);
+            },
+      onHorizontalDragEnd: widget.disabled
+          ? null
+          : (details) {
+              _onRightDragEnd(details);
+            },
+      onHorizontalDragUpdate: widget.disabled
+          ? null
+          : (DragUpdateDetails details) async {
+              await _onRightDragUpdate(details);
+            },
       child: current,
     );
 
