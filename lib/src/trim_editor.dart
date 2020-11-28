@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 
-VideoPlayerController videoPlayerController;
-
 class TrimEditor extends StatefulWidget {
   final double viewerWidth;
 
@@ -93,8 +91,11 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
   double _fraction;
   double _offset = 0;
 
+  VideoPlayerController videoPlayerController;
+
   Future<void> _initializeVideoController() async {
     if (_videoFile != null) {
+      videoPlayerController.initialize();
       videoPlayerController.addListener(() {
         final bool isPlaying = videoPlayerController.value.isPlaying;
 
