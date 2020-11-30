@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:video_trimmer/src/trim_editor.dart';
 
 class VideoViewer extends StatefulWidget {
   /// For specifying the color of the video
@@ -14,6 +13,9 @@ class VideoViewer extends StatefulWidget {
   /// For specifying a padding around the video viewer
   /// area. By default it is set to `EdgeInsets.all(0.0)`.
   final EdgeInsets padding;
+
+  // video player controller used to show the video to be trimmed
+  final VideoPlayerController videoPlayerController;
 
   /// For showing the video playback area.
   ///
@@ -31,6 +33,7 @@ class VideoViewer extends StatefulWidget {
   /// area. By default it is set to `EdgeInsets.all(0.0)`.
   ///
   VideoViewer({
+    @required this.videoPlayerController,
     this.borderColor = Colors.transparent,
     this.borderWidth = 0.0,
     this.padding = const EdgeInsets.all(0.0),
@@ -52,8 +55,8 @@ class _VideoViewerState extends State<VideoViewer> {
       child: Padding(
         padding: widget.padding,
         child: AspectRatio(
-          aspectRatio: videoPlayerController.value.aspectRatio,
-          child: videoPlayerController.value.initialized
+          aspectRatio: widget.videoPlayerController.value.aspectRatio,
+          child: widget.videoPlayerController.value.initialized
               ? Container(
                   decoration: BoxDecoration(
                     border: Border.all(
@@ -61,7 +64,7 @@ class _VideoViewerState extends State<VideoViewer> {
                       color: widget.borderColor,
                     ),
                   ),
-                  child: VideoPlayer(videoPlayerController),
+                  child: VideoPlayer(widget.videoPlayerController),
                 )
               : Container(
                   child: Center(

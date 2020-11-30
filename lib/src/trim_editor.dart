@@ -96,18 +96,18 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
 
   Future<void> _initializeVideoController() async {
     if (_videoFile != null) {
-      videoPlayerController.addListener(() {
-        final bool isPlaying = videoPlayerController.value.isPlaying;
+      widget.videoPlayerController.addListener(() {
+        final bool isPlaying = widget.videoPlayerController.value.isPlaying;
 
         if (isPlaying) {
           widget.onChangePlaybackState(true);
           setState(() {
             _currentPosition =
-                videoPlayerController.value.position.inMilliseconds;
+                widget.videoPlayerController.value.position.inMilliseconds;
 
             if (_currentPosition > _videoEndPos.toInt()) {
               widget.onChangePlaybackState(false);
-              videoPlayerController.pause();
+              widget.videoPlayerController.pause();
               _animationController.stop();
             } else {
               if (!_animationController.isAnimating) {
@@ -117,7 +117,7 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
             }
           });
         } else {
-          if (videoPlayerController.value.initialized) {
+          if (widget.videoPlayerController.value.initialized) {
             if (_animationController != null) {
               if ((_scrubberAnimation.value).toInt() == (_end).toInt()) {
                 _animationController.reset();
@@ -129,17 +129,19 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
         }
       });
 
-      videoPlayerController.setVolume(1.0);
+      widget.videoPlayerController.setVolume(1.0);
 
-      _videoDuration = videoPlayerController.value.duration.inMilliseconds;
+      _videoDuration =
+          widget.videoPlayerController.value.duration.inMilliseconds;
 
       _videoStartPos = 0.0;
       widget.onChangeStart(_videoStartPos);
 
       _videoEndPos = widget.maxDuration.inMilliseconds.toDouble();
-      if (videoPlayerController.value.duration <= widget.maxDuration)
-        _videoEndPos =
-            videoPlayerController.value.duration.inMilliseconds.toDouble();
+      if (widget.videoPlayerController.value.duration <= widget.maxDuration)
+        _videoEndPos = widget
+            .videoPlayerController.value.duration.inMilliseconds
+            .toDouble();
 
       widget.onChangeEnd(_videoEndPos);
 
@@ -185,8 +187,8 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
         widget.onChangeEnd(_videoEndPos);
       });
 
-      await videoPlayerController.pause();
-      await videoPlayerController
+      await widget.videoPlayerController.pause();
+      await widget.videoPlayerController
           .seekTo(Duration(milliseconds: _videoStartPos.toInt()));
     });
   }
@@ -238,11 +240,11 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    videoPlayerController.pause();
+    widget.videoPlayerController.pause();
     widget.onChangePlaybackState(false);
     if (_videoFile != null) {
-      videoPlayerController.setVolume(0.0);
-      videoPlayerController.pause();
+      widget.videoPlayerController.setVolume(0.0);
+      widget.videoPlayerController.dispose();
     }
     controller?.dispose();
     super.dispose();
@@ -410,8 +412,8 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
       widget.onChangeEnd(_videoEndPos);
     });
 
-    await videoPlayerController.pause();
-    await videoPlayerController
+    await widget.videoPlayerController.pause();
+    await widget.videoPlayerController
         .seekTo(Duration(milliseconds: _videoStartPos.toInt()));
 
     _linearTween.end = _end;
@@ -437,8 +439,8 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
       widget.onChangeStart(_videoStartPos);
     });
 
-    await videoPlayerController.pause();
-    await videoPlayerController
+    await widget.videoPlayerController.pause();
+    await widget.videoPlayerController
         .seekTo(Duration(milliseconds: _videoStartPos.toInt()));
 
     _linearTween.begin = _start + _sliderLength;

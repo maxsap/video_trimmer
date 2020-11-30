@@ -121,7 +121,9 @@ class _TrimmerViewState extends State<TrimmerView> {
                   child: Text("SAVE"),
                 ),
                 Expanded(
-                  child: VideoViewer(),
+                  child: VideoViewer(
+                      videoPlayerController:
+                          widget._trimmer.videoPlayerController),
                 ),
                 Center(
                   child: TrimEditor(
