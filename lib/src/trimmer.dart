@@ -36,10 +36,15 @@ class Trimmer {
   Future<VideoPlayerController> loadVideo({@required File videoFile}) async {
     currentVideoFile = videoFile;
     if (currentVideoFile != null) {
-      final VideoPlayerController videoPlayerController =
-          VideoPlayerController.file(currentVideoFile);
-      await videoPlayerController.initialize();
-      return videoPlayerController;
+      try {
+        final VideoPlayerController videoPlayerController =
+            VideoPlayerController.file(currentVideoFile);
+        await videoPlayerController.initialize();
+        this.videoPlayerController = videoPlayerController;
+        return videoPlayerController;
+      } catch (e) {
+        throw e;
+      }
     } else {
       throw ArgumentError("VideoFile cannot be null");
     }
