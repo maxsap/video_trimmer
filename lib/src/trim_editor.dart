@@ -239,12 +239,11 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
   }
 
   @override
-  void dispose() {
+  void dispose() async {
     widget.videoPlayerController.pause();
     widget.onChangePlaybackState(false);
     if (_videoFile != null) {
       widget.videoPlayerController.setVolume(0.0);
-      widget.videoPlayerController.dispose();
     }
     controller?.dispose();
     super.dispose();
