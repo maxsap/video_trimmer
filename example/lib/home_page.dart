@@ -7,7 +7,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 
 class HomePage extends StatelessWidget {
-  final Trimmer _trimmer = Trimmer();
+  final Trimmer _trimmer = Trimmer(
+    maxDuration: Duration(seconds: 60),
+    minDuration: Duration(seconds: 1),
+  );
   final ImagePicker imagePicker = ImagePicker();
   @override
   Widget build(BuildContext context) {

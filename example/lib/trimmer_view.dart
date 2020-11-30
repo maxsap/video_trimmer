@@ -129,6 +129,8 @@ class _TrimmerViewState extends State<TrimmerView> {
                     viewerWidth: MediaQuery.of(context).size.width,
                     maxDuration: Duration(seconds: 30),
                     minDuration: Duration(seconds: 5),
+                    videoPlayerController:
+                        widget._trimmer.videoPlayerController,
                     // fit: BoxFit.cover,
                     onChangeStart: (value) {
                       _startValue = value;

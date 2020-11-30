@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 
-VideoPlayerController videoPlayerController;
-
 class TrimEditor extends StatefulWidget {
   final double viewerWidth;
 
@@ -34,11 +32,14 @@ class TrimEditor extends StatefulWidget {
 
   final bool disabled;
 
+  final VideoPlayerController videoPlayerController;
+
   TrimEditor({
     @required this.viewerWidth,
     @required this.viewerHeight,
     @required this.maxDuration,
     @required this.minDuration,
+    @required this.videoPlayerController,
     this.disabled = false,
     this.scrubberPaintColor = Colors.white,
     this.thumbnailQuality = 75,
@@ -242,8 +243,6 @@ class _TrimEditorState extends State<TrimEditor> with TickerProviderStateMixin {
     if (_videoFile != null) {
       videoPlayerController.setVolume(0.0);
       videoPlayerController.pause();
-      videoPlayerController.dispose();
-      widget.onChangePlaybackState(false);
     }
     controller?.dispose();
     super.dispose();

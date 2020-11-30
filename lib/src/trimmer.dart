@@ -10,7 +10,6 @@ import 'package:video_player/video_player.dart';
 import 'package:video_trimmer/src/file_formats.dart';
 import 'package:video_trimmer/src/processing_result.dart';
 import 'package:video_trimmer/src/storage_dir.dart';
-import 'package:video_trimmer/src/trim_editor.dart';
 
 /// Helps in loading video from file, saving trimmed video to a file
 /// and gives video playback controls. Some of the helpful methods
@@ -22,8 +21,9 @@ class Trimmer {
   static File currentVideoFile;
   final Duration maxDuration;
   final Duration minDuration;
-
   final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
+
+  VideoPlayerController videoPlayerController;
 
   Trimmer({
     @required this.maxDuration,
@@ -33,11 +33,15 @@ class Trimmer {
   /// Loads a video using the path provided.
   ///
   /// Returns the loaded video file.
-  Future<void> loadVideo({@required File videoFile}) async {
+  Future<VideoPlayerController> loadVideo({@required File videoFile}) async {
     currentVideoFile = videoFile;
     if (currentVideoFile != null) {
-      videoPlayerController = VideoPlayerController.file(currentVideoFile);
+      final VideoPlayerController videoPlayerController =
+          VideoPlayerController.file(currentVideoFile);
       await videoPlayerController.initialize();
+      return videoPlayerController;
+    } else {
+      throw ArgumentError("VideoFile cannot be null");
     }
   }
 
