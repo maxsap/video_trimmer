@@ -13,6 +13,8 @@ dependencies:
     sdk: flutter
   video_trimmer:
     path: ../
+  
+  gallery_saver: ^2.0.1
 
   cupertino_icons: ^0.1.2
   image_picker: ^0.6.7+14
@@ -27,3 +29,4 @@ flutter:
   assets:
   - assets/watermark2.png
   - assets/watermark2.gif
+  - assets/FreeSans.ttf

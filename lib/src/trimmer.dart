@@ -1,13 +1,14 @@
 import 'dart:io';
 
-import 'package:path/path.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_trimmer/src/file_formats.dart';
+import 'package:video_trimmer/src/processing_result.dart';
 import 'package:video_trimmer/src/storage_dir.dart';
 import 'package:video_trimmer/src/trim_editor.dart';
 
@@ -148,7 +149,7 @@ class Trimmer {
   /// video format is passed in [customVideoFormat], then the app may
   /// crash.
   ///
-  Future<String> saveTrimmedVideo({
+  Future<ProcessingResult> saveTrimmedVideo({
     @required double startValue,
     @required double endValue,
     bool applyVideoEncoding = false,
@@ -250,7 +251,7 @@ class Trimmer {
         await _flutterFFmpeg.execute(_command).whenComplete(() async {
       print('Got value');
       debugPrint('Video successfuly saved');
-      // GallerySaver.saveVideo(_outputPath);
+      GallerySaver.saveVideo(_outputPath);
       // _resultString = 'Video successfuly saved';
     }).catchError((error) {
       print('Error');
@@ -260,7 +261,7 @@ class Trimmer {
 
     print('GOT THIS VALUE => $result');
 
-    return _outputPath;
+    return ProcessingResult(_outputPath, result);
   }
 
   Future cancel() async {
