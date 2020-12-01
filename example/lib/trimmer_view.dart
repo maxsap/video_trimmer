@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:example/preview.dart';
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -27,8 +28,6 @@ class _TrimmerViewState extends State<TrimmerView> {
       _progressVisibility = true;
     });
 
-    ProcessingResult _processingResult;
-
     // final File watermarkFile = await _getPath();
     // final String watermarkPath = watermarkFile.path;
     // String addWatermark =
@@ -45,18 +44,18 @@ class _TrimmerViewState extends State<TrimmerView> {
     // final String waterMarkString = '''
     // ''';
 
-    await widget._trimmer
-        .saveTrimmedVideo(
+    final ProcessingResult _processingResult =
+        await widget._trimmer.saveTrimmedVideo(
       startValue: _startValue,
       endValue: _endValue,
       ffmpegCommand: waterMarkString,
-    )
-        .then((value) {
-      setState(() {
-        _progressVisibility = false;
-        _processingResult = value;
-      });
+    );
+
+    setState(() {
+      _progressVisibility = false;
     });
+
+    GallerySaver.saveVideo(_processingResult.outputPath);
 
     return _processingResult;
   }

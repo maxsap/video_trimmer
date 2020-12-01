@@ -228,7 +228,7 @@ class Trimmer {
     //     ' -ss $startPoint -i "$_videoPath" -t ${endPoint - startPoint} -avoid_negative_ts make_zero ';
 
     String _trimLengthCommand =
-        '-i "$_videoPath" -ss $startPoint -t ${endPoint - startPoint}';
+        '-i "$_videoPath" -ss $startPoint -t ${endPoint - startPoint} -avoid_negative_ts make_zero ';
 
     if (ffmpegCommand == null) {
       _command = '$_trimLengthCommand -c:a copy ';
@@ -256,19 +256,9 @@ class Trimmer {
 
     _command += '"$_outputPath"';
 
-    final int result =
-        await _flutterFFmpeg.execute(_command).whenComplete(() async {
-      print('Got value');
-      debugPrint('Video successfuly saved');
-      GallerySaver.saveVideo(_outputPath);
-      // _resultString = 'Video successfuly saved';
-    }).catchError((error) {
-      print('Error');
-      // _resultString = 'Couldn\'t save the video';
-      debugPrint('Couldn\'t save the video');
-    });
+    final int result = await _flutterFFmpeg.execute(_command);
 
-    print('GOT THIS VALUE => $result');
+    print('Video Processing ended with result => $result');
 
     return ProcessingResult(_outputPath, result);
   }
