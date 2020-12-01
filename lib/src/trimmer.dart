@@ -249,7 +249,7 @@ class Trimmer {
       }
     } else {
       _command =
-          '$_trimLengthCommand $ffmpegCommand -c:a copy -crf 0 -threads auto -qscale 1 -pix_fmt yuv420p ';
+          '$_trimLengthCommand $ffmpegCommand -codec:a copy -threads auto -qscale 1 -pix_fmt yuv420p ';
       _outputFormatString = customVideoFormat ?? _outputFormatString;
     }
 
