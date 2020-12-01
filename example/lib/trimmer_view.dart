@@ -37,9 +37,8 @@ class _TrimmerViewState extends State<TrimmerView> {
     // ''';
     final File fontPath = await _getFontPath();
     final String path = fontPath.path;
-    final String waterMarkString = '''
-    -vf "drawtext=text='Text':x=10:y=H-th-10:fontfile=$path:fontsize=32:fontcolor=white:shadowcolor=black:shadowx=5:shadowy=5"
-    ''';
+    final String waterMarkString =
+        '''-vf "drawtext=text='This Is A teST':x=10:y=H-th-10:fontfile=$path:fontsize=35:fontcolor=white:box=1:boxcolor=black@0.5: boxborderw=30"''';
 
     // final String waterMarkString = '''
     // ''';

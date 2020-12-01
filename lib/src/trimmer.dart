@@ -248,7 +248,8 @@ class Trimmer {
             '$_trimLengthCommand -vf "fps=$fpsGIF,scale=$scaleGIF:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 ';
       }
     } else {
-      _command = '$_trimLengthCommand $ffmpegCommand ';
+      _command =
+          '$_trimLengthCommand $ffmpegCommand -c:a copy -crf 0 -threads auto -qscale 1 ';
       _outputFormatString = customVideoFormat ?? _outputFormatString;
     }
 
