@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -249,7 +248,7 @@ class Trimmer {
       }
     } else {
       _command =
-          '$_trimLengthCommand $ffmpegCommand -codec:a copy -threads auto -qscale 1 -pix_fmt yuv420p ';
+          '$_trimLengthCommand $ffmpegCommand -vcodec libx264 -preset veryfast -crf 17 -pix_fmt yuv420p -threads auto -tune zerolatency -movflags +faststart ';
       _outputFormatString = customVideoFormat ?? _outputFormatString;
     }
 
