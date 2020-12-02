@@ -32,16 +32,10 @@ class _TrimmerViewState extends State<TrimmerView> {
     // final String watermarkPath = watermarkFile.path;
     // String addWatermark =
     //     '-ignore_loop 0 -i "$watermarkPath" -filter_complex "overlay=x=(main_w-overlay_w):y=(main_h-overlay_h)" -c:a copy';
-    // final String overlayCommand = '''
-    // -filter_complex "[0]split[v0][v1];[v0]crop=iw:ih/2,format=rgba,geq=r=0:g=0:b=0:a=255*(Y/H)[fg];[v1][fg]overlay=0:H-h:format=auto"
-    // ''';
     final File fontPath = await _getFontPath();
     final String path = fontPath.path;
     final String waterMarkString =
         '''-vf "drawtext=text='This Is A teST':x=10:y=H-th-10:fontfile=$path:fontsize=35:fontcolor=white:box=1:boxcolor=black@0.5: boxborderw=30"''';
-
-    // final String waterMarkString = '''
-    // ''';
 
     final ProcessingResult _processingResult =
         await widget._trimmer.saveTrimmedVideo(
@@ -57,15 +51,6 @@ class _TrimmerViewState extends State<TrimmerView> {
     GallerySaver.saveVideo(_processingResult.outputPath);
 
     return _processingResult;
-  }
-
-  Future<File> _getPath() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    var dbPath = join(directory.path, "watermark.gif");
-    ByteData data = await rootBundle.load("assets/watermark2.gif");
-    List<int> bytes =
-        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-    return File(dbPath).writeAsBytes(bytes);
   }
 
   Future<File> _getFontPath() async {

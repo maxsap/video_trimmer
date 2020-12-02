@@ -247,6 +247,7 @@ class Trimmer {
             '$_trimLengthCommand -vf "fps=$fpsGIF,scale=$scaleGIF:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 ';
       }
     } else {
+      // for more info check https://trac.ffmpeg.org/wiki/Encode/H.264
       _command =
           '$_trimLengthCommand $ffmpegCommand -vcodec libx264 -preset ultrafast -crf 20 -pix_fmt yuv420p -threads auto -tune zerolatency -movflags +faststart ';
       _outputFormatString = customVideoFormat ?? _outputFormatString;
