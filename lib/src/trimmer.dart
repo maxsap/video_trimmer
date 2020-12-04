@@ -248,8 +248,7 @@ class Trimmer {
       }
     } else {
       // for more info check https://trac.ffmpeg.org/wiki/Encode/H.264
-      _command =
-          '$_trimLengthCommand $ffmpegCommand -vcodec libx264 -preset ultrafast -crf 20 -pix_fmt yuv420p -tune zerolatency -movflags +faststart ';
+      _command = '$_trimLengthCommand $ffmpegCommand ';
       _outputFormatString = customVideoFormat ?? _outputFormatString;
     }
 
